@@ -4,9 +4,14 @@
 # installed packages: dig, curl
 # dyndns entry has do be set to a valid IP such as 127.0.0.1 / vaid IPv6
 #
+# Based on www.domaindiscount24.com
+#
+#
+# modification can be donw on the update URLfor other dynDNS services
+#
 
 # enable IPv4 and / or IPv6 updateing
-# Values: 0 - diabled; 1 - enabled
+# Values: 0 - disabled; 1 - enabled
 ENA_IPv4=1
 ENA_IPv6=1
 
@@ -31,7 +36,6 @@ SECRET="<SECRET>" # key to allow the update
 # obtain IPv4 and IPv6 information from dyndns.org - based NOT on REGEX
 IPv4=$(curl -s -0 -4 checkip.dyndns.org | awk  '{ print $6 }' | cut -f 1 -d "<")
 IPv6=$(curl -s -0 -6 checkipv6.dyndns.org |  awk  '{ print $6 }' | cut -f 1 -d "<")
-#IPv6=$(curl -s -0 -6 checkipv6.dyndns.org |  awk  '{ print $6 }' | rev | cut -c16- | rev)
 
 # IPv4 update
 if [ $ENA_IPv4 == "1" ]; then
@@ -54,6 +58,7 @@ if [ $ENA_IPv4 == "1" ]; then
                 if [ $DEBUG == "1" ]; then echo  "Updatestring: https://dynamicdns.key-systems.net/update.php?hostname=$FQDN&password=$SECRET&ip=$IPv4" && sleep 5; fi
                 if [ $DEBUG == "0" ]; then curl -0 -s "https://dynamicdns.key-systems.net/update.php?hostname=$FQDN&password=$SECRET&ip=$IPv4"  > /dev/null; fi
                 if [ $DEBUG == "0" ]; then logger "DynDNS - Entry updated for IPv4: $FQDN to $IPv4"; fi
+                echo "$DATE - DynDNS4 - $FQDN - $IPv4" >> $LOGBASE/$LOGFILE
            #else
            #     echo "no update"
            fi
@@ -86,6 +91,7 @@ if [ $ENA_IPv6 == "1" ]; then
                 if [ $DEBUG == "1" ]; then echo  "Updatestring: https://dynamicdns.key-systems.net/update.php?hostname=$FQDN&password=$SECRET&ip=$IPv6" && sleep 5; fi
                 if [ $DEBUG == "0" ]; then curl -0 -s "https://dynamicdns.key-systems.net/update.php?hostname=$FQDN&password=$SECRET&ip=$IPv6"  > /dev/null; fi
                 if [ $DEBUG == "0" ]; then logger "DynDNS - Entry updated for IPv6: $FQDN to $IPv6"; fi
+                echo "$DATE - DynDNS6 - $FQDN - $IPv6" >> $LOGBASE/$LOGFILE
             #else
             #    echo "no update"
             fi
@@ -110,3 +116,10 @@ if [ $DEBUG == "1" ]; then
 	    echo "not updated"
 	esac
 fi
+
+# Sources:
+# https://stackoverflow.com/questions/45565521/regex-validate-ipv6-shell-script
+# https://www.linuxjournal.com/content/validating-ip-address-bash-script
+# https://www.domaindiscount24.com/faq/en/dynamic-dns
+#
+
