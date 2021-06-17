@@ -50,7 +50,7 @@ if [ $ENA_IPv4 == "1" ]; then
         # check if DNS entry coming back is an IP Adress
         #if [[ $GETDNSIPv4 =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
         if [[ $GETDNSIPv4 =~ $IPv4_REX ]]; then
-            if [ $DEBUG == "1" ]; then echo "ok - DNS answer is an IPv4:" $GETDNSIPv4; fi
+            if [ $DEBUG == "1" ]; then echo "ok - DNS answer is an IPv4: $GETDNSIPv4"; fi
 
             # check if external entry is similar to local IP
             if [ "$IPv4" != "$GETDNSIPv4" ]; then
@@ -58,13 +58,13 @@ if [ $ENA_IPv4 == "1" ]; then
                 if [ $DEBUG == "1" ]; then echo  "Updatestring: https://dynamicdns.key-systems.net/update.php?hostname=$FQDN&password=$SECRET&ip=$IPv4" && sleep 5; fi
                 if [ $DEBUG == "0" ]; then curl -0 -s "https://dynamicdns.key-systems.net/update.php?hostname=$FQDN&password=$SECRET&ip=$IPv4"  > /dev/null; fi
                 if [ $DEBUG == "0" ]; then logger "DynDNS - Entry updated for IPv4: $FQDN to $IPv4"; fi
-                echo "$DATE - DynDNS4 - $FQDN - $IPv4" >> $LOGBASE/$LOGFILE
+                echo "$DATE - DynDNS4 - $FQDN - $IPv4" >> "$LOGBASE"/"$LOGFILE"
            #else
            #     echo "no update"
            fi
 
         else
-            if [ $DEBUG == "1" ]; then echo "fail - DNS answer is an IPv4:" $GETDNSIPv4; fi
+            if [ $DEBUG == "1" ]; then echo "fail - DNS answer is an IPv4: $GETDNSIPv4"; fi
             logger "dyndns - DNS request check failed: $FQDN - GETDNSIPv4"
         fi
 
@@ -83,7 +83,7 @@ if [ $ENA_IPv6 == "1" ]; then
 
         # check if DNS entry coming back is an IP Adress
         if [[ $GETDNSIPv6 =~ $IPv6_REX ]]; then
-            if [ $DEBUG == "1" ]; then echo "ok - DNS answer is an IPv6:" $GETDNSIPv6; fi
+            if [ $DEBUG == "1" ]; then echo "ok - DNS answer is an IPv6: $GETDNSIPv6"; fi
 
             # check if external entry is similar to local IP
             if [ "$IPv6" != "$GETDNSIPv6" ]; then
@@ -91,13 +91,13 @@ if [ $ENA_IPv6 == "1" ]; then
                 if [ $DEBUG == "1" ]; then echo  "Updatestring: https://dynamicdns.key-systems.net/update.php?hostname=$FQDN&password=$SECRET&ip=$IPv6" && sleep 5; fi
                 if [ $DEBUG == "0" ]; then curl -0 -s "https://dynamicdns.key-systems.net/update.php?hostname=$FQDN&password=$SECRET&ip=$IPv6"  > /dev/null; fi
                 if [ $DEBUG == "0" ]; then logger "DynDNS - Entry updated for IPv6: $FQDN to $IPv6"; fi
-                echo "$DATE - DynDNS6 - $FQDN - $IPv6" >> $LOGBASE/$LOGFILE
+                echo "$DATE - DynDNS6 - $FQDN - $IPv6" >> "$LOGBASE"/"$LOGFILE"
             #else
             #    echo "no update"
             fi
 
         else
-            if [ $DEBUG == "1" ]; then echo "fail - DNS answer is an IPv6:" $GETDNSIPv6; fi
+            if [ $DEBUG == "1" ]; then echo "fail - DNS answer is an IPv6: $GETDNSIPv6"; fi
             logger "DynDNS - DNS request check failed: $FQDN - GETDNSIPv6"
         fi
     fi
@@ -106,7 +106,7 @@ fi
 # if you run that the firt time
 # initialise the dyndns names
 if [ $DEBUG == "1" ]; then
-	read -p "Do you want to iniciate the dynamic DNS names ? Yes/No :" yn2
+	read -r -p "Do you want to iniciate the dynamic DNS names ? Yes/No :" yn2
 	case $yn2 in
 	  [Yy]*)
             if [ $ENA_IPv4 == "1" ]; then curl -s -0  "https://dynamicdns.key-systems.net/update.php?hostname=$FQDN&password=$SECRET&ip=$IPv4"; fi
